@@ -5,11 +5,14 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# fzf
 source /usr/share/doc/fzf/examples/key-bindings.zsh
 source /usr/share/doc/fzf/examples/completion.zsh
 export FZF_CTRL_R_OPTS="--height 40% --preview \"echo {}\" --preview-window up:3:hidden:wrap"
+export FZF_DEFAULT_COMMAND="history | tac | awk '{print $2}'"
+
+# zoxide
 eval "$(zoxide init zsh)"
-export PS1="%F{cyan}%n@%m %F{yellow}%~%f %# "
 
 # Created by `pipx` on 2025-06-14 02:05:04
 export PATH="$PATH:/home/rio/.local/bin"
