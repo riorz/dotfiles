@@ -1,13 +1,33 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
+# Helpers
+
+install_apt_if_missing() {
+  local pkg=$1
+
+  if dpkg -s "$pkg" >/dev/null 2>&1; then
+    echo "✅ 已安裝 $pkg"
+  else
+    echo "📦 安裝 $pkg..."
+    sudo apt install -y "$pkg"
+  fi
+}
+
+
+# Update and install packages.
 echo "🔧 更新系統..."
 sudo apt update && sudo apt upgrade -y
 
 echo "⚙️ 安裝必要工具..."
-PACKAGES="zsh git vim curl wget unzip fzf zoxide pipx jq golang-go stow"
-for pkg in $PACKAGES; do
-  dpkg -l | grep -q $pkg || sudo apt install -y $pkg
+PACKAGES=(
+	zsh git vim curl wget unzip fzf zoxide pipx jq golang-go stow
+)
+for pkg in "${PACKAGES[@]}"; do
+  install_apt_if_missing "$pkg"
 done
+
 
 echo "📌 設定 pipx 環境變數..."
 pipx ensurepath
