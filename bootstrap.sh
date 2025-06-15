@@ -15,6 +15,36 @@ install_apt_if_missing() {
   fi
 }
 
+clone_or_update() {
+  local repo_url=$1
+  local target_dir=$2
+  local checkout_ref=$3  # 可選參數，可是 commit / tag / branch
+  
+  # 展開 ~
+  target_dir="${target_dir/#\~/$HOME}"
+
+  if [ -d "$target_dir/.git" ]; then
+    echo "📁 已存在 $target_dir"
+    read -p "🔄 是否更新該 repo？(y/N): " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+      echo "🚀 拉取更新中..."
+      git -C "$target_dir" pull --ff-only || echo "⚠️ 更新失敗，請檢查本地變更"
+    else
+      echo "⏭️ 跳過更新"
+    fi
+  else
+    echo "📥 Cloning $repo_url 到 $target_dir..."
+    git clone --depth=1 "$repo_url" "$target_dir"
+  fi
+
+  # 如指定版本（tag / commit / branch），就切換過去
+  if [ -n "$checkout_ref" ]; then
+    echo "🔁 切換到版本 $checkout_ref"
+    git -C "$target_dir" fetch --depth=1 origin "$checkout_ref"
+    git -C "$target_dir" checkout "$checkout_ref" || echo "⚠️ 切換版本失敗，請檢查名稱是否正確"
+  fi
+}
+
 
 # Update and install packages.
 echo "🔧 更新系統..."
@@ -47,32 +77,23 @@ wget -O FiraCodeNerdFont.zip "https://github.com/ryanoasis/nerd-fonts/releases/l
 unzip -o FiraCodeNerdFont.zip
 fc-cache -fv
 
-echo "⚡ 安裝 zsh-autosuggestions..."
-if [ ! -d ~/.zsh/zsh-autosuggestions ]; then
-  git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-fi
+REPOS=(
+	"https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions"
+	"https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting"
+	"https://github.com/supercrabtree/k.git ~/k"
+	"https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k"
+	"https://github.com/riorz/dotfiles.git ~/dotfiles"	
+)
 
-echo "🔍 安裝 zsh-syntax-highlighting..."
-if [ ! -d ~/.zsh/zsh-syntax-highlighting ]; then
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
-fi
+for entry in "${REPOS[@]}"; do
+  # 用 set -- 把字串分成位置參數
+  set -- $entry
+  repo_url=$1
+  target_dir=$2
+  checkout_ref=$3
 
-echo "📂 安裝 k..."
-if [ ! -d ~/k ]; then
-  git clone https://github.com/supercrabtree/k.git ~/k
-fi
-
-echo "安裝 powerline..."
-if [ ! -d ~/powerlevel10k ]; then
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-fi
-
-echo "📁 下載 dotfiles 並應用設定..."
-if [ ! -d ~/dotfiles ]; then
-  git clone https://github.com/YOUR_GITHUB/dotfiles.git ~/dotfiles
-fi
-cd ~/dotfiles
-for dir in */; do stow "${dir%/}"; done
+  clone_or_update "$repo_url" "$target_dir" "$checkout_ref"
+done
 
 echo "📁 自動執行 stow..."
 cd ~/dotfiles
