@@ -52,7 +52,7 @@ sudo apt update && sudo apt upgrade -y
 
 echo "⚙️ 安裝必要工具..."
 PACKAGES=(
-	zsh git vim curl wget unzip fzf zoxide pipx jq golang-go stow
+	zsh git vim curl wget unzip fontconfig fzf zoxide pipx jq golang-go stow
 )
 for pkg in "${PACKAGES[@]}"; do
   install_apt_if_missing "$pkg"
