@@ -1,0 +1,12 @@
+[user]
+	name = reevizy@gmail.com
+[core]
+	editor = vim
+[alias]
+	lg = log --oneline --graph --decorate --all
+	st = status
+	ci = commit -m
+	co = checkout
+	br = branch
+	df = diff
+	last = log -1 HEAD
