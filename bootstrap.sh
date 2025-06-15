@@ -42,6 +42,11 @@ if [ ! -d ~/k ]; then
   git clone https://github.com/supercrabtree/k.git ~/k
 fi
 
+echo "安裝 powerline..."
+if [ ! -d ~/powerlevel10k ]; then
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+fi
+
 echo "📁 下載 dotfiles 並應用設定..."
 if [ ! -d ~/dotfiles ]; then
   git clone https://github.com/YOUR_GITHUB/dotfiles.git ~/dotfiles
