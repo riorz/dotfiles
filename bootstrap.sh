@@ -4,7 +4,7 @@ echo "🔧 更新系統..."
 sudo apt update && sudo apt upgrade -y
 
 echo "⚙️ 安裝必要工具..."
-PACKAGES="zsh git curl wget unzip fzf zoxide pipx jq golang-go stow"
+PACKAGES="zsh git vim curl wget unzip fzf zoxide pipx jq golang-go stow"
 for pkg in $PACKAGES; do
   dpkg -l | grep -q $pkg || sudo apt install -y $pkg
 done
@@ -16,6 +16,9 @@ echo "⚙️ 安裝 Rust（使用 Rustup）..."
 if ! command -v rustc &> /dev/null; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
+
+echo "⚙️ 設定 Zsh 為預設 Shell..."
+chsh -s $(which zsh)
 
 echo "🎨 安裝 Nerd Font..."
 mkdir -p ~/.local/share/fonts
@@ -45,5 +48,11 @@ if [ ! -d ~/dotfiles ]; then
 fi
 cd ~/dotfiles
 for dir in */; do stow "${dir%/}"; done
+
+echo "📁 自動執行 stow..."
+cd ~/dotfiles
+for dir in */; do
+  stow -v "${dir%/}"
+done
 
 echo "✨ 完成！請重新啟動終端機以套用設定 🎯"
