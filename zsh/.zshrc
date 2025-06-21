@@ -1,3 +1,26 @@
+# History files setting for fzf
+# 歷史檔案路徑
+HISTFILE=~/.zsh_history
+
+# 歷史紀錄大小
+HISTSIZE=10000
+SAVEHIST=10000
+
+# 開啟追加歷史，避免覆寫
+setopt APPEND_HISTORY
+
+# 即時將命令寫入歷史檔（可選）
+setopt INC_APPEND_HISTORY
+
+# 忽略重複紀錄（可選）
+setopt HIST_IGNORE_DUPS
+
+# 忽略空命令
+setopt HIST_IGNORE_ALL_DUPS
+
+# 不保存空白命令
+setopt HIST_SAVE_NO_DUPS
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -30,3 +53,4 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 source /home/rio/k/k.sh
 alias python=python3
+alias bat="batcat"
